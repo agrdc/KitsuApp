@@ -1,6 +1,8 @@
 package com.example.kitsuapp.core.application
 
 import android.app.Application
+import com.example.kitsuapp.domain.ValidatePasswordUseCase
+import com.example.kitsuapp.domain.usecase.ValidateEmailUseCase
 import com.example.kitsuapp.ui.viewmodel.LoginViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -12,8 +14,10 @@ import timber.log.Timber
 class KitsuApplication : Application() {
     private val koinModule: Module = module {
         viewModel {
-            LoginViewModel()
+            LoginViewModel(get(), get())
         }
+        factory { ValidateEmailUseCase() }
+        factory { ValidatePasswordUseCase() }
     }
 
     override fun onCreate() {

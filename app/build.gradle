@@ -49,19 +49,25 @@ android {
 dependencies {
 
     // AndroidX Core
-    implementation 'androidx.core:core-ktx:1.10.0'
+    implementation 'androidx.core:core-ktx:1.9.0'
     // Lifecycle Runtime KTX
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
     // AndroidX Compose Activity
-    implementation 'androidx.activity:activity-compose:1.7.0'
+    implementation 'androidx.activity:activity-compose:1.7.1'
     // Jetpack Compose
     implementation "androidx.compose.ui:ui:$compose_ui_version"
     // Jetpack Compose Tooling Preview
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
+    // Compose Lifecycle
+    implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.1"
     // Material
-    implementation 'androidx.compose.material:material:1.4.1'
+    implementation 'androidx.compose.material3:material3:1.0.1'
     // Koin main features for Android
     implementation 'io.insert-koin:koin-android:3.4.0'
+    // Koin Compose
+    implementation 'io.insert-koin:koin-androidx-compose:3.4.0'
+    // Compose Constraint Layout
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
     // Koin Test features
     testImplementation 'io.insert-koin:koin-test:3.4.0'
     // Timber Logging
@@ -75,6 +81,7 @@ dependencies {
     // Compose Instrumented Tests
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
 
+    implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
 }

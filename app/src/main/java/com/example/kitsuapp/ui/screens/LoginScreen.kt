@@ -1,6 +1,7 @@
 package com.example.kitsuapp.ui.screens
 
 import android.content.res.Configuration
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -12,7 +13,9 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -21,6 +24,7 @@ import com.example.kitsuapp.ui.components.CustomMessageDialog
 import com.example.kitsuapp.ui.viewmodel.LoginEvent
 import com.example.kitsuapp.ui.viewmodel.LoginViewModel
 import com.example.kitsuapp.ui.viewmodel.LoginViewState
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -59,13 +63,28 @@ fun LoginContent(
     onButtonClick: (() -> Unit)? = null,
     inPortrait: Boolean = true,
 ) {
+
+    var showSnackbar by remember {
+        mutableStateOf(true)
+    }
+
+//    LaunchedEffect(key1 = showSnackbar) {
+//        if (showSnackbar) {
+//            delay(2000)
+//            showSnackbar = false
+//        }
+//    }
+
+
     ConstraintLayout(
         modifier = Modifier.fillMaxSize(),
     ) {
-        val (emailField, passwordField, button) = createRefs()
+        val (emailField, passwordField, button, snackBar) = createRefs()
         val verticalGuideline = createGuidelineFromTop(0.35F.takeIf { inPortrait } ?: 0.25F)
         val horizontalGuidelineStart = createGuidelineFromStart(fraction = 0.1f)
         val horizontalGuidelineEnd = createGuidelineFromEnd(fraction = 0.1f)
+        val snackBarGuidelineStart = createGuidelineFromStart(fraction = 0.01f.takeIf { inPortrait } ?: 0.001f)
+        val snackBarGuidelineEnd = createGuidelineFromEnd(fraction = 0.01f.takeIf { inPortrait } ?: 0.001f)
         val buttonGuideline = createGuidelineFromBottom(fraction = 0.075f)
 
         OutlinedTextField(shape = RoundedCornerShape(8.dp),
@@ -76,7 +95,7 @@ fun LoginContent(
                 width = Dimension.fillToConstraints
             },
             singleLine = true,
-            label = { Text(text = "E-mail")},
+            label = { Text(text = "E-mail") },
             value = state.emailTextFieldValue,
             onValueChange = {
                 validateEmail?.invoke(it)
@@ -128,6 +147,29 @@ fun LoginContent(
                 Text(text = "Login")
             }
         }
+
+        if (showSnackbar) {
+            Snackbar(modifier = Modifier
+                .constrainAs(snackBar) {
+                    start.linkTo(snackBarGuidelineStart)
+                    end.linkTo(snackBarGuidelineEnd)
+                    top.linkTo(button.bottom, margin = 2.dp)
+                    bottom.linkTo(parent.bottom)
+                    width = Dimension.fillToConstraints
+                    height = Dimension.fillToConstraints
+
+                },
+                action = {
+                    Text(text = "Action",
+                        color = Color.White,
+                        modifier = Modifier.clickable {
+                            showSnackbar = false
+                        }
+                    )
+                }) {
+                Text("Message")
+            }
+        }
     }
 
     if (state.showDialog) {
@@ -135,8 +177,8 @@ fun LoginContent(
             outlinedButtonText = "Simulate error",
             filledButtonText = "Proceed",
             outlinedButtonAction = {
-                  toggleDialogState?.invoke()
-                //TODO showErrorState
+                toggleDialogState?.invoke()
+                showSnackbar = true
             },
             filledButtonAction = {
                 //TODO navigate to next screen
@@ -151,5 +193,11 @@ fun LoginContent(
 @Preview
 @Composable
 fun LoginContentPreview() {
+    LoginContent(state = LoginViewState(loading = true, buttonEnabled = true))
+}
+
+@Preview(device = Devices.AUTOMOTIVE_1024p, widthDp = 720, heightDp = 360)
+@Composable
+fun LoginContentPreviewLandscape() {
     LoginContent(state = LoginViewState(loading = true, buttonEnabled = true))
 }
